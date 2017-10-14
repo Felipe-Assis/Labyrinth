@@ -1,2 +1,2 @@
 # Labyrinth
-https://github.com/Felipe-Assis/Labyrinth/index.html
+https://felipe-assis.github.io/Labyrinth/
