@@ -16,7 +16,8 @@ var counter = 0;
 var left, right, up, down;
 var count = 0;
 var traveling = false;
-var path = [0,0,0,0]; //[LEFT, UP, RIGHT, DOWN]
+var path = [false,false,false,false]; //[LEFT, UP, RIGHT, DOWN]
+var mic;
 //===========================================
 for (var i=0; i<n; i++){
   lab.push([]);
@@ -85,6 +86,9 @@ function venceu(){
 
   
 function setup() {
+    // mic = new p5.AudioIn()
+    // mic.start();
+
     noStroke();
     larg=Math.floor(m/2*tc+(m/2+1)*tp);
     alt=Math.floor(n/2*tc+(n/2+1)*tp);
@@ -156,24 +160,38 @@ function arrow(){
 
 	fill(100,100,220);
 	//left arrow
-	if (count <= 60){
+	if (count<=60 && path[0]==true){
 	triangle(cx-15, cy+8, cx-15, cy-8, cx-30, cy);
 	}
+  else if(count<=60 && path[0]==false){
+    count = 61;
+  }
 
 	//up arrow
-	if (count >60 && count <= 120 ){
+	if (count>60 && count<=120 && path[1]==true){
 	triangle(cx+8, cy-15, cx-8, cy-15, cx, cy-30);
 	}
+  else if(count>60 && count<=120 && path[1]==false){
+    count = 121;
+
+  }
 
 	//right arrow
-	if (count >120 && count <= 180 ){
+	if (count>120 && count<=180 && path[2]==true){
 	triangle(cx+15, cy+8, cx+15, cy-8, cx+30, cy);
 	}
+  else if(count>120 && count<=180 && path[2]==false){
+    count = 181;
+
+  }
 
 	//down arrow
-	if (count >180 && count < 240 ){
+	if (count>180 && count<240 && path[3]==true){
 	triangle(cx+8, cy+15, cx-8, cy+15, cx, cy+30);
 	}
+  else if(count>180 && count<240 && path[3]===false){
+    count = 239;
+  }
 
 	count ++;
 	if (count==240) count = 0;
@@ -184,8 +202,36 @@ function arrow(){
 
 }
 
+
+function verify(){
+  //left
+  if (p1>=0 && p1<n && (p2-1)>=0 && (p2-1)<m && lab[p1][p2-1]==false){
+    path[0]=true;
+  }
+  else path[0]=false;
+
+  //up
+  if ((p1-1)>=0 && (p1-1)<n && p2>=0 && p2<m && lab[p1-1][p2]==false){
+    path[1]=true;
+  }
+  else path[1]=false;
+
+  //right
+  if (p1>=0 && p1<n && (p2+1)>= 0 && (p2+1)<m && lab[p1][p2+1]==false){
+    path[2]=true;
+  }
+  else path[2]=false;
+
+
+  if  ((p1+1)>=0 &&  (p1+1)<n &&  p2>= 0 &&  p2<m && lab[p1+1][p2]==false){
+    path[3]=true;
+  }
+  else path[3]=false;
+}
+
 function draw() {
   background(200)
+  verify();
   for (var i=0; i<n; i++){
     if (i%2 == 0){
       alt = tp;
