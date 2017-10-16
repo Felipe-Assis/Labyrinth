@@ -14,6 +14,9 @@ var lab = [];
 var vencedor = false;
 var counter = 0;
 var left, right, up, down;
+var count = 0;
+var traveling = false;
+var path = [0,0,0,0]; //[LEFT, UP, RIGHT, DOWN]
 //===========================================
 for (var i=0; i<n; i++){
   lab.push([]);
@@ -147,6 +150,39 @@ function keyPressed(){
 
 //=============================================
 
+function arrow(){
+	strokeWeight(1);
+	stroke(0);
+
+	fill(100,100,220);
+	//left arrow
+	if (count <= 60){
+	triangle(cx-15, cy+8, cx-15, cy-8, cx-30, cy);
+	}
+
+	//up arrow
+	if (count >60 && count <= 120 ){
+	triangle(cx+8, cy-15, cx-8, cy-15, cx, cy-30);
+	}
+
+	//right arrow
+	if (count >120 && count <= 180 ){
+	triangle(cx+15, cy+8, cx+15, cy-8, cx+30, cy);
+	}
+
+	//down arrow
+	if (count >180 && count < 240 ){
+	triangle(cx+8, cy+15, cx-8, cy+15, cx, cy+30);
+	}
+
+	count ++;
+	if (count==240) count = 0;
+
+
+	fill(150,150,150);
+	noStroke();
+
+}
 
 function draw() {
   background(200)
@@ -188,4 +224,7 @@ function draw() {
     	text("You won", width/2-180, height/2);
     }
   }
+  arrow();
+
+
 }
