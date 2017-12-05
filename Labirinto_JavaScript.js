@@ -1,7 +1,7 @@
-new p5();
+// new p5();
 //==========================================
-var n = 40;
-var m = 40;
+var n = 46;
+var m = 76;
 var tp = 2;
 var tc = 24;
 var p1 = randInt(0, n-1);
@@ -19,9 +19,16 @@ var traveling = false;
 var path = [false,false,false,false]; //[LEFT, UP, RIGHT, DOWN]
 var dir = 4; //0=LEFT; 1=UP; 2=RIGHT; 3=DOWN; 4=IDLE;
 var tsec = 60; //time until arrow changes direction
-var mic;
-var micDelay = 0;
+// var mic;
+// var micDelay = 0;
 //===========================================
+//==========Speach Recognition===============
+var myRec = new p5.SpeechRec('en-US', parseResult); // new P5.SpeechRec object
+myRec.continuous = true; // do continuous recognition
+myRec.interimResults = true; // allow partial recognition (faster, less accurate)
+
+
+
 for (var i=0; i<n; i++){
   lab.push([]);
    for (var j=0; j<m; j++){
@@ -89,8 +96,17 @@ function venceu(){
 
   
 function setup() {
-    mic = new p5.AudioIn()
-    mic.start();
+    // instructions:
+    textSize(20);
+    textAlign(LEFT);
+    text("draw: up, down, left, right, clear", 20, 20);
+
+    //myRec.onResult = parseResult; // now in the constructor
+    myRec.start(); // start engine
+
+
+    // mic = new p5.AudioIn()
+    // mic.start();
 
     noStroke();
     larg=Math.floor(m/2*tc+(m/2+1)*tp);
@@ -112,170 +128,15 @@ function setup() {
 //=============================================
 
 function keyPressed(){
-	if (keyCode === LEFT_ARROW){
-		var ii = p1;
-		var jj = p2-1;
-		 if (ii>=0 && ii < n && jj >= 0 && jj<m && lab[ii][jj]==false){
-		 	p2 = p2-2;
-		 	cx = cx - (tp+tc);
-		 	counter +=1;
-		 	venceu();
-		 }
-	}
-	if (keyCode === UP_ARROW){
-		var ii = p1-1;
-		var jj = p2;
-		 if (ii>=0 && ii < n && jj >= 0 && jj<m && lab[ii][jj]==false){
-		 	p1 = p1-2;
-		 	cy = cy - (tp+tc);
-		 	counter +=1;
-		 	venceu();
-		 }
-	}
-	if (keyCode === RIGHT_ARROW){
-		var ii = p1;
-		var jj = p2+1;
-		 if (ii>=0 &&  ii < n &&  jj >= 0 &&  jj<m && lab[ii][jj]==false){
-		 	p2 = p2+2;
-		 	cx = cx + (tp+tc);
-		 	counter +=1;
-		 	venceu();
-		 }
-	}
-	if (keyCode === DOWN_ARROW){
-		var ii = p1+1;
-		var jj = p2;
-		 if  (ii>=0 &&  ii < n &&  jj >= 0 &&  jj<m && lab[ii][jj]==false){
-		 	p1 = p1+2;
-		 	cy = cy + (tp+tc);
-		 	counter +=1;
-		 	venceu();
-		 }
-	}
-}
-
-
-//=============================================
-
-function arrow(){
-	strokeWeight(1);
-	stroke(0);
-
-	fill(100,100,220);
-	//left arrow
-	if (count<tsec && path[0]==true){
-	   triangle(cx-15, cy+8, cx-15, cy-8, cx-30, cy);
-     dir = 0;
-	}
-  else if(count<tsec && path[0]==false){
-    count = tsec;
-    dir = 4;
-  }
-
-	//up arrow
-	if (count>=tsec && count<2*tsec && path[1]==true){
-	   triangle(cx+8, cy-15, cx-8, cy-15, cx, cy-30);
-     dir = 1;
-	}
-  else if(count>=tsec && count<2*tsec && path[1]==false){
-    count = 2*tsec;
-    dir = 4;
-  }
-
-	//right arrow
-	if (count>=2*tsec && count<3*tsec && path[2]==true){
-	   triangle(cx+15, cy+8, cx+15, cy-8, cx+30, cy);
-     dir = 2;
-	}
-  else if(count>=2*tsec && count<3*tsec && path[2]==false){
-    count = 3*tsec;
-    dir = 4;
-  }
-
-	//down arrow
-	if (count>=3*tsec && count<4*tsec && path[3]==true){
-	   triangle(cx+8, cy+15, cx-8, cy+15, cx, cy+30);
-     dir = 3;
-	}
-  else if(count>=3*tsec && count<4*tsec && path[3]===false){
-    count = 4*tsec-1;
-    dir = 4;
-  }
-
-	count ++;
-	if (count==4*tsec) count = 0;
-
-
-	fill(150,150,150);
-	noStroke();
-
-}
-
-
-function walk(){
-
-  if (micDelay==0) var micLevel = mic.getLevel();
-
-
-  if (micLevel > 0.1 && dir!=4){
-    if (dir==0){
-      count = 0;
-      p2 = p2-2;
-      cx = cx - (tp+tc);} //left
-
-    if (dir==1){
-      count = tsec;
-      p1 = p1-2;
-      cy = cy - (tp+tc);} //up
-
-    if (dir==2){
-      count = 2*tsec;
-      p2 = p2+2;
-      cx = cx + (tp+tc);} //right
-
-    if (dir==3){ 
-      p1 = p1+2;
-      count = 3*tsec;
-      cy = cy + (tp+tc);} //down
-  }
-  dir = 4;
-  if (micDelay<1) micDelay++;
-  else micDelay = 0;
-}
-
-function verify(){
-  //left
-  if (p1>=0 && p1<n && (p2-1)>=0 && (p2-1)<m && lab[p1][p2-1]==false){
-    path[0]=true;
-    // dir = 0;
-  }
-  else path[0]=false;
-
-  //up
-  if ((p1-1)>=0 && (p1-1)<n && p2>=0 && p2<m && lab[p1-1][p2]==false){
-    path[1]=true;
-    // dir = 1;
-  }
-  else path[1]=false;
-
-  //right
-  if (p1>=0 && p1<n && (p2+1)>= 0 && (p2+1)<m && lab[p1][p2+1]==false){
-    path[2]=true;
-    // dir = 2;
-  }
-  else path[2]=false;
-
-  //down
-  if  ((p1+1)>=0 &&  (p1+1)<n &&  p2>= 0 &&  p2<m && lab[p1+1][p2]==false){
-    path[3]=true;
-    // dir = 3;
-  }
-  else path[3]=false;
+	if (keyCode === LEFT_ARROW) moveLeft();
+	if (keyCode === UP_ARROW) moveUp();
+	if (keyCode === RIGHT_ARROW) moveRight();
+	if (keyCode === DOWN_ARROW) moveDown();
 }
 
 function draw() {
   background(200)
-  verify();
+  // verify();
 
   for (var i=0; i<n; i++){
     if (i%2 == 0){
@@ -305,7 +166,6 @@ function draw() {
     }
   }
 
-  arrow();
   strokeWeight(1);
   stroke(0);
   fill(255,0,0);
@@ -317,5 +177,66 @@ function draw() {
   	textSize(60);
   	text("You won", width/2-180, height/2);
   }
-  walk();
+}
+
+
+function parseResult()
+{
+  // recognition system will often append words into phrases.
+  // so hack here is to only use the last word:
+  var mostrecentword = myRec.resultString.split(' ').pop();
+  if(mostrecentword.indexOf("left")!==-1) moveLeft();
+
+  else if(mostrecentword.indexOf("right")!==-1) moveRight();
+
+  else if(mostrecentword.indexOf("up")!==-1) moveUp();
+
+  else if(mostrecentword.indexOf("down")!==-1) moveDown();
+
+  console.log(mostrecentword);
+}
+
+
+function moveLeft(){
+  var ii = p1;
+  var jj = p2-1;
+   if (ii>=0 && ii < n && jj >= 0 && jj<m && lab[ii][jj]==false){
+    p2 = p2-2;
+    cx = cx - (tp+tc);
+    counter +=1;
+    venceu();
+  }
+}
+
+function moveRight(){
+  var ii = p1;
+  var jj = p2+1;
+   if (ii>=0 &&  ii < n &&  jj >= 0 &&  jj<m && lab[ii][jj]==false){
+    p2 = p2+2;
+    cx = cx + (tp+tc);
+    counter +=1;
+    venceu();
+  }
+}
+
+function moveUp(){
+  var ii = p1-1;
+  var jj = p2;
+   if (ii>=0 && ii < n && jj >= 0 && jj<m && lab[ii][jj]==false){
+    p1 = p1-2;
+    cy = cy - (tp+tc);
+    counter +=1;
+    venceu();
+  }
+}
+
+function moveDown(){
+  var ii = p1+1;
+  var jj = p2;
+   if  (ii>=0 &&  ii < n &&  jj >= 0 &&  jj<m && lab[ii][jj]==false){
+    p1 = p1+2;
+    cy = cy + (tp+tc);
+    counter +=1;
+    venceu();
+  }
 }
