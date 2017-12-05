@@ -23,6 +23,7 @@ var tsec = 60; //time until arrow changes direction
 // var micDelay = 0;
 //===========================================
 //==========Speach Recognition===============
+var myVoice = new p5.Speech(); // new P5.Speech object
 var myRec = new p5.SpeechRec('en-US', parseResult); // new P5.SpeechRec object
 myRec.continuous = true; // do continuous recognition
 myRec.interimResults = true; // allow partial recognition (faster, less accurate)
@@ -97,9 +98,7 @@ function venceu(){
   
 function setup() {
     // instructions:
-    textSize(20);
-    textAlign(LEFT);
-    text("draw: up, down, left, right, clear", 20, 20);
+    myVoice.speak('Bem vindo ao labirinto. Diga left, right, up ou down para se mover.');
 
     //myRec.onResult = parseResult; // now in the constructor
     myRec.start(); // start engine
@@ -135,8 +134,7 @@ function keyPressed(){
 }
 
 function draw() {
-  background(200)
-  // verify();
+  background(200);
 
   for (var i=0; i<n; i++){
     if (i%2 == 0){
@@ -166,6 +164,10 @@ function draw() {
     }
   }
 
+  textSize(20);
+  textAlign(LEFT);
+  fill(255,69,0);
+  text("Move: left, right, up, down", 20, 20);
   strokeWeight(1);
   stroke(0);
   fill(255,0,0);

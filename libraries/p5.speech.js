@@ -1,5 +1,4 @@
 /*! p5.speech.js v0.0.1 2015-06-12 */
-/* updated v0.0.2 2017-10-17 */
 /**
  * @module p5.speech
  * @submodule p5.speech
@@ -37,7 +36,7 @@
    * @class p5.Speech
    * @constructor
    */
-  p5.Speech = function(_dv, _callback) {
+  p5.Speech = function(_dv) {
 
     //
     // speech synthesizers consist of a single synthesis engine
@@ -74,7 +73,6 @@
     // first parameter of constructor is an initial voice selector
     this.initvoice;
     if(_dv !== undefined) this.initvoice=_dv;
-    if(_callback !== undefined) this.onLoad =_callback;
 
     var that = this; // some bullshit
 
@@ -104,19 +102,19 @@
 
         that.utterance.onstart = function(e) {
           //console.log("STARTED");
-          if(that.onStart!=undefined) that.onStart(e);     
+          if(that.onStart!=undefined) that.onStart(e);        
         };
         that.utterance.onpause = function(e) {
           //console.log("PAUSED");
-          if(that.onPause!=undefined) that.onPause(e);
+          if(that.onPause!=undefined) that.onPause(e);        
         };
         that.utterance.onresume = function(e) {
           //console.log("RESUMED");
-          if(that.onResume!=undefined) that.onResume(e);
+          if(that.onResume!=undefined) that.onResume(e);        
         };
         that.utterance.onend = function(e) {
           //console.log("ENDED");
-          if(that.onEnd!=undefined) that.onEnd(e); 
+          if(that.onEnd!=undefined) that.onEnd(e);        
         };
       }
     };
@@ -199,23 +197,6 @@
     this.synth.cancel(); // KILL SYNTH
   };
 
-  // Setting callbacks with functions instead
-  p5.Speech.prototype.started = function(_cb) {
-   this.onStart = _cb;
-  }
-
-  p5.Speech.prototype.ended = function(_cb) {
-    this.onEnd = _cb;
-  }
-
-  p5.Speech.prototype.paused = function(_cb) {
-    this.onPause = _cb;
-  }
-
-  p5.Speech.prototype.resumed = function(_cb) {
-    this.onResume = _cb;
-  }
-
 // =============================================================================
 //                         p5.SpeechRec
 // =============================================================================
@@ -227,7 +208,7 @@
    * @class p5.SpeechRec
    * @constructor
    */
-  p5.SpeechRec = function(_lang, _callback) {
+  p5.SpeechRec = function(_lang) {
 
     //
     // speech recognition consists of a recognizer object per 
@@ -262,7 +243,6 @@
     this.onStart; // fires when the recognition system is started...
     this.onError; // ...has a problem (e.g. the mic is shut off)...
     this.onEnd; // ...and ends (in non-continuous mode).
-    if(_callback !== undefined) this.onResult=_callback;
 
     // recognizer properties:
 
@@ -344,10 +324,8 @@
   // this one 'start' cycle.  if you need to recognize speech more
   // than once, use continuous mode rather than firing start() 
   // multiple times in a single script.
-  p5.SpeechRec.prototype.start = function(_continuous, _interim) {
+  p5.SpeechRec.prototype.start = function() {
     if('webkitSpeechRecognition' in window) {
-      if(_continuous !== undefined) this.continuous = _continuous;
-      if(_interim !== undefined) this.interimResults = _interim;
       this.rec.continuous = this.continuous;
       this.rec.interimResults = this.interimResults;
       this.rec.start();
